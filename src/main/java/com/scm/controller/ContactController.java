@@ -189,7 +189,7 @@ public class ContactController {
     public String updateContactFormView(
         @PathVariable("contactId") String contactId,
         Model model
-    )
+    ) 
     {
         var contact =contactService.getById(contactId);
         ContactForm contactForm = new ContactForm();
@@ -212,4 +212,45 @@ public class ContactController {
         return "user/update_contact_view";
     }
 
+    @RequestMapping(value = "/update/{contactId}", method = RequestMethod.POST)
+    public String updateContact(@PathVariable("contactId") String contactId, 
+    @ModelAttribute ContactForm contactForm, 
+    Model model)
+    {
+        var con = contactService.getById(contactId);
+        con.setId(contactId);
+        con.setName(contactForm.getName());
+        con.setPhoneNumber(contactForm.getPhoneNumber());
+        con.setEmail(contactForm.getEmail());
+        con.setAddress(contactForm.getAddress());
+        con.setDescription(contactForm.getDescription());
+        con.setFavourite(contactForm.isFavourite());
+        con.setWebsiteLink(contactForm.getWebsiteLink());
+        con.setLinkedInLink(contactForm.getLinkedInLink());
+
+        // Process the image:
+        if (contactForm.getContactImage() != null && !contactForm.getContactImage().isEmpty()) {
+            logger.info("File is not empty");
+            String fileName = UUID.randomUUID().toString();
+            String imageURL = imageService.uploadImage(contactForm.getContactImage(), fileName);
+            con.setCloudinaryImagePublicId(fileName); // Update with the new public ID
+            con.setPicture(imageURL);                // Update with the new picture URL
+            contactForm.setPicture(imageURL);
+        } else {
+            logger.info("File is empty, keeping existing image data");
+            // Preserve existing image data
+            var existingContact = contactService.getById(contactId); // Fetch existing contact
+            con.setPicture(existingContact.getPicture());           // Preserve the existing picture URL
+            con.setCloudinaryImagePublicId(existingContact.getCloudinaryImagePublicId()); // Preserve the existing public ID
+        }
+
+        var updatedCon = contactService.update(con);
+        logger.info("Updated contact {}", updatedCon);
+        model.addAttribute("message", Message.builder()
+                                            .content("Contact updated successfully")
+                                            .type(MessageType.green)
+                                            .build());
+
+        return "redirect:/user/contacts/view/" + contactId;
+    }
 }

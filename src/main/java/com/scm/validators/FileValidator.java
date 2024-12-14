@@ -2,9 +2,6 @@ package com.scm.validators;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.*;
-import java.awt.image.*;
-
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

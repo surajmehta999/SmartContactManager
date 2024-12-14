@@ -37,8 +37,20 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public Contact update(Contact contact) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        var contactOld= contactRepo.findById(contact.getId()).orElseThrow(()-> new ResourceNotFoundException("Contact not found"));
+        contactOld.setName(contact.getName());
+        contactOld.setPhoneNumber(contact.getPhoneNumber());
+        contactOld.setEmail(contact.getEmail());
+        contactOld.setAddress(contact.getAddress());
+        contactOld.setDescription(contact.getDescription());
+        contactOld.setFavourite(contact.isFavourite());
+        contactOld.setLinkedInLink(contact.getLinkedInLink());
+        contactOld.setWebsiteLink(contact.getWebsiteLink());
+        if(contact.getPicture() != null){
+            contactOld.setPicture(contact.getPicture());
+            contactOld.setCloudinaryImagePublicId(contact.getCloudinaryImagePublicId());
+        }    
+        return contactRepo.save(contactOld);
     }
 
     @Override
@@ -50,14 +62,6 @@ public class ContactServiceImpl implements ContactService {
     public Contact getById(String id) {
         return contactRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Contact not found with given id "+id));
     }
-
-   
-
-    // @Override
-    // public List<Contact> search(String name, String email, String phoneNumber) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'search'");
-    // }
 
     @Override
     public List<Contact> getByUserId(String userId) {
