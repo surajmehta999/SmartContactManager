@@ -43,6 +43,11 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
+    public User verifiedSaveUser(User user) {
+        return userRepo.save(user);
+    }
+
+    @Override
     public Optional<User> getUserById(String id) {
         return userRepo.findById(id);
     }
@@ -96,5 +101,12 @@ public class UserServiceImpl implements UserService
     public User getUserByEmail(String email) {
         return userRepo.findByEmail(email).orElse(null);
     }
+
+    @Override
+    public User findByVerificationToken(String token) {
+        return userRepo.findByVerificationToken(token);
+    }
+
+   
     
 }

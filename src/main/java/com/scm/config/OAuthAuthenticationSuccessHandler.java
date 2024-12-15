@@ -14,10 +14,12 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
 import com.scm.entities.Providers;
 import com.scm.entities.User;
 import com.scm.helpers.AppConstants;
 import com.scm.repositories.UserRepo;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +38,6 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
             
             //identify the Providers
             
-            
            var oauth2AuthenticationToken =  (OAuth2AuthenticationToken)authentication;
            String authorizedClinetRegistrationId =oauth2AuthenticationToken.getAuthorizedClientRegistrationId();
         //    logger.info(authorizedClinetRegistrationId); 
@@ -50,7 +51,7 @@ public class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessH
            User user = new User();
            user.setUserId(UUID.randomUUID().toString());
            user.setRoleList(List.of(AppConstants.ROLE_USER));
-           user.setEmailVerified(true);
+        //    user.setEmailVerified(true);
            user.setEnabled(true);
 
            if(authorizedClinetRegistrationId.equalsIgnoreCase("google"))

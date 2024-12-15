@@ -93,6 +93,7 @@ public class SecurityConfig {
                 formLogin.usernameParameter("email");
 
                 formLogin.passwordParameter("password");
+
                 
                 // formLogin.failureHandler(new AuthenticationFailureHandler() {
 

@@ -46,7 +46,9 @@ public class User implements UserDetails{
     private String phoneNumber;
 
     private boolean enabled=true;
+
     private boolean emailVerified =false;
+    private String verificationToken;
     private boolean phoneVerified=false;
 
     //login SELF,GOOGLE,GUTHUB
