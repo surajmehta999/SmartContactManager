@@ -1,5 +1,6 @@
 # Ignore application.properties
 application.properties
+.vscode/
 
 # Ignore all log files
 *.log
