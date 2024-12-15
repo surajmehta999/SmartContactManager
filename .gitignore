@@ -1,0 +1,9 @@
+# Ignore application.properties
+application.properties
+
+# Ignore all log files
+*.log
+
+# Ignore the node_modules directory
+/node_modules/
+

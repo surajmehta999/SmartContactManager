@@ -81,13 +81,8 @@ public class ContactController {
 
 
         logger.info("file information : {}",contactForm.getContactImage().getOriginalFilename());
-       
-       //image random name
-        String fileName = UUID.randomUUID().toString();
-
-        String fileURL =imageService.uploadImage(contactForm.getContactImage(),fileName);
-
-         //saving data into DB
+    
+        //saving data into DB
         Contact contact=new Contact();
         contact.setName(contactForm.getName());
         contact.setEmail(contactForm.getEmail());
@@ -98,17 +93,17 @@ public class ContactController {
         contact.setLinkedInLink(contactForm.getLinkedInLink());
         contact.setFavourite(contactForm.isFavourite());
         contact.setUser(user);
-        contact.setPicture(fileURL);
-        contact.setCloudinaryImagePublicId(fileName);
-       
+
+        if(contactForm.getContactImage() != null && !contactForm.getContactImage().isEmpty()){
+            String fileName = UUID.randomUUID().toString();
+            String fileURL =imageService.uploadImage(contactForm.getContactImage(),fileName);
+            contact.setPicture(fileURL);
+            contact.setCloudinaryImagePublicId(fileName);
+        }
         contactService.save(contact);
         System.out.println(contactForm);
 
-        //set the contact picture
-
-
         //set the message to be displayed on the view
-
         Message message =  Message.builder().content("Contact Saved Successfully").type(MessageType.green).build();
         session.setAttribute("message",message);
 
@@ -214,9 +209,12 @@ public class ContactController {
 
     @RequestMapping(value = "/update/{contactId}", method = RequestMethod.POST)
     public String updateContact(@PathVariable("contactId") String contactId, 
-    @ModelAttribute ContactForm contactForm, 
-    Model model)
+   @Valid @ModelAttribute ContactForm contactForm, 
+    BindingResult bindingResult, Model model)
     {
+        if(bindingResult.hasErrors()){
+            return "/user/update_contact_view";
+        }
         var con = contactService.getById(contactId);
         con.setId(contactId);
         con.setName(contactForm.getName());
