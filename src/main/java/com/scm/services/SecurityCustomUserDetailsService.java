@@ -17,8 +17,16 @@ public class SecurityCustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // apne user ko load krana hai
-      return userRepo.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User not found with email : "+username));
+        //apne user ko load krana hai
+      User user = userRepo.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+
+      if (!user.isEmailVerified()) { // Assuming `isEmailVerified` is the method for the `emailVerified` field
+          throw new UsernameNotFoundException("Email not verified for user: " + username);
+      }
+
+      return user; // User should implement UserDetails interface
+     
+        // return userRepo.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User not found with email : "+username));
     }
 
 }

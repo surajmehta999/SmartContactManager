@@ -63,14 +63,21 @@ public class User implements UserDetails{
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roleList=new ArrayList<>();
 
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    // // List of roles [USER,ADMIN]
+    // // Collection of SimpleGrantedAuthority[roles{ADMIN,USER}]
+    //     Collection<SimpleGrantedAuthority> roles=  roleList.stream().map(role -> new SimpleGrantedAuthority(about))
+    //     .collect(Collectors.toList());
+    //     return roles;
+    // }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-    // List of roles [USER,ADMIN]
-    // Collection of SimpleGrantedAuthority[roles{ADMIN,USER}]
-        Collection<SimpleGrantedAuthority> roles=  roleList.stream().map(role -> new SimpleGrantedAuthority(about))
-        .collect(Collectors.toList());
-        return roles;
+        return roleList.stream()
+            .map(SimpleGrantedAuthority::new) // Map each role to a SimpleGrantedAuthority
+            .collect(Collectors.toList());
     }
+
     //Username
     @Override
     public String getUsername() {
