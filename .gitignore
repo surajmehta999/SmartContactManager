@@ -1,7 +1,7 @@
 # Ignore application.properties
 application.properties
 .vscode/
-
+/target/
 # Ignore all log files
 *.log
 
