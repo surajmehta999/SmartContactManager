@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import com.scm.helpers.Message;
 import com.scm.helpers.MessageType;
 import com.scm.services.ContactService;
 import com.scm.services.ImageService;
+import com.scm.services.PdfGeneratorService;
 import com.scm.services.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,6 +34,14 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @Controller
@@ -46,6 +56,9 @@ public class ContactController {
     
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private PdfGeneratorService pdfGeneratorService;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -186,6 +199,7 @@ public class ContactController {
         Model model
     ) 
     {
+        System.out.println("Contact Page");
         var contact =contactService.getById(contactId);
         ContactForm contactForm = new ContactForm();
         contactForm.setName(contact.getName());
@@ -251,4 +265,30 @@ public class ContactController {
 
         return "redirect:/user/contacts/view/" + contactId;
     }
+
+    @GetMapping("/export/{id}")
+    public ResponseEntity<byte[]> exportContactToPdf(@PathVariable String id) {
+        // Fetch contact details using the ID
+        Contact contact = contactService.getById(id);
+        if (contact == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Generate PDF content
+        String pdfContent = "Contact Details:\n" +
+                            "Name: " + contact.getName() + "\n" +
+                            "Email: " + contact.getEmail() + "\n" +
+                            "Phone: " + contact.getPhoneNumber();
+        byte[] pdfBytes = pdfGeneratorService.generatePdf(pdfContent);
+
+        // Return PDF as a downloadable response
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "contact_" + id + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
 }

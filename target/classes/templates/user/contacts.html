@@ -100,6 +100,10 @@
                                                 <button th:contact-id="${contact.id}" th:onclick="loadContactData(this.getAttribute('contact-id'))" >
                                                     <i class="fa-solid w-6 h-6 fa-eye"></i>
                                                 </button>
+                                                <!-- Export Contact -->
+                                                <a th:href="@{'/user/contacts/export/' + ${contact.id}}">
+                                                    <i class="fa-solid fa-file-export"></i>
+                                                </a>  
                                             </div>  
                                         </td>
                                     </tr>
