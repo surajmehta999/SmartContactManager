@@ -92,18 +92,28 @@
                                                     <i class="fa-solid w-6 h-6 fa-trash"></i>
                                                 </button>
                                                 <!-- Update contact -->
-                                                <a th:href="@{'/user/contacts/view/'+${contact.id}}">
-                                                    <i class="fa-solid w-6 h-6 fa-pen"></i>
-                                                </a>
+                                                <button>
+                                                    <a th:href="@{'/user/contacts/view/'+${contact.id}}">
+                                                        <i class="fa-solid w-6 h-6 fa-pen"></i>
+                                                    </a>
+                                                </button>
                                                 
                                                 <!-- View Contact -->
                                                 <button th:contact-id="${contact.id}" th:onclick="loadContactData(this.getAttribute('contact-id'))" >
                                                     <i class="fa-solid w-6 h-6 fa-eye"></i>
                                                 </button>
-                                                <!-- Export Contact -->
-                                                <a th:href="@{'/user/contacts/export/' + ${contact.id}}">
-                                                    <i class="fa-solid fa-file-export"></i>
-                                                </a>  
+                                                <!-- Export PDF Contact -->
+                                                <button>
+                                                    <a th:href="@{'/user/contacts/exportPDF/' + ${contact.id}}">
+                                                        <i class="fa-solid w-6 h-6 fa-file-export"></i>
+                                                    </a>
+                                                </button>  
+                                                 <!-- Export Excel Contact -->
+                                                <button>
+                                                    <a th:href="@{'/user/contacts/exportEXCEL/' + ${contact.id}}">
+                                                        <i class="fa-solid w-6 h-6 fa-file-excel"></i>
+                                                    </a>
+                                                </button> 
                                             </div>  
                                         </td>
                                     </tr>

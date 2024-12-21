@@ -24,6 +24,7 @@ import com.scm.helpers.Helper;
 import com.scm.helpers.Message;
 import com.scm.helpers.MessageType;
 import com.scm.services.ContactService;
+import com.scm.services.ExcelGeneratorService;
 import com.scm.services.ImageService;
 import com.scm.services.PdfGeneratorService;
 import com.scm.services.UserService;
@@ -59,6 +60,9 @@ public class ContactController {
 
     @Autowired
     private PdfGeneratorService pdfGeneratorService;
+
+    @Autowired
+    private ExcelGeneratorService excelGeneratorService;
 
     private Logger logger = LoggerFactory.getLogger(ContactController.class);
 
@@ -266,7 +270,7 @@ public class ContactController {
         return "redirect:/user/contacts/view/" + contactId;
     }
 
-    @GetMapping("/export/{id}")
+    @GetMapping("/exportPDF/{id}")
     public ResponseEntity<byte[]> exportContactToPdf(@PathVariable String id) {
         // Fetch contact details using the ID
         Contact contact = contactService.getById(id);
@@ -289,6 +293,27 @@ public class ContactController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    @GetMapping("/exportEXCEL/{id}")
+    public ResponseEntity<byte[]> exportSingleContactToExcel(@PathVariable String id) {
+        // Fetch the contact by ID
+        Contact contact = contactService.getById(id);
+        if (contact == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Generate Excel for the contact
+        byte[] excelBytes = excelGeneratorService.generateExcelForSingleContact(contact);
+
+        // Return Excel file as a downloadable response
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "contact_" + id + ".xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(excelBytes);
     }
 
 }
